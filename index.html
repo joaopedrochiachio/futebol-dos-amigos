@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Liga dos Amigos 2025</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&family=Space+Grotesk:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="hero-wrapper">
+        <div class="hero-overlay"></div>
+        <img src="time.jpg" alt="Time" class="hero-img" onerror="this.style.display='none'">
+
+        <div class="hero-text">
+            <div class="live-tag">
+                <div class="pulse-dot"></div> TEMPORADA 2026
+            </div>
+            <h1>FUTEBOL<br><span>DOS AMIGOS</span></h1>
+        </div>
+    </div>
+
+    <main class="app-interface">
+
+        <div class="segmented-control">
+            <button class="seg-btn active" onclick="switchTab('visao-geral')"><i class="fa-solid fa-house"></i></button>
+            <button class="seg-btn" onclick="switchTab('classificacao')">Geral</button>
+            <button class="seg-btn" onclick="switchTab('artilharia')">Gols</button>
+            <button class="seg-btn" onclick="switchTab('goleiros')">Gol</button>
+            <div class="seg-glider"></div>
+        </div>
+
+        <div id="content-area"></div>
+
+    </main>
+
+    <div id="player-sheet" class="sheet-backdrop">
+        <div class="sheet-card">
+            <div class="sheet-handle"></div>
+            <button class="close-sheet" onclick="closeSheet()"><i class="fa-solid fa-xmark"></i></button>
+
+            <div class="sheet-header">
+                <div class="player-rank-badge" id="sRank">#1</div>
+                <h2 id="sName">NOME</h2>
+                <div class="team-shield"><i class="fa-solid fa-shield-halved"></i></div>
+            </div>
+
+            <div class="sheet-stats">
+                <div class="stat-cell main">
+                    <span class="val" id="sPoints">0</span>
+                    <span class="lbl">PONTOS</span>
+                </div>
+                <div class="stat-cell">
+                    <span class="val" id="sGames">0</span>
+                    <span class="lbl">JOGOS</span>
+                </div>
+                <div class="stat-cell">
+                    <span class="val" id="sGoals">0</span>
+                    <span class="lbl">GOLS</span>
+                </div>
+            </div>
+
+            <div class="sheet-history">
+                <h3>FORMA RECENTE</h3>
+                <div class="history-track" id="sHistory"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="dados.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
