@@ -844,3 +844,299 @@ h1 span {
         transform: translateY(0) scale(1);
     }
 }
+
+/* --- WIDGET CURIOSIDADES (Novos estilos) --- */
+.trivia-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* 3 colunas iguais */
+    gap: 10px;
+    margin-bottom: 15px;
+    /* Espaço antes do próximo jogo */
+}
+
+.trivia-card {
+    background: linear-gradient(160deg, #1a1a1a, #0d0d0d);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 12px 5px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.trivia-icon {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+    color: var(--text-muted);
+}
+
+/* Cores específicas para cada ícone */
+.icon-shield {
+    color: #00e676;
+    filter: drop-shadow(0 0 5px rgba(0, 230, 118, 0.4));
+}
+
+.icon-target {
+    color: #ff1744;
+    filter: drop-shadow(0 0 5px rgba(255, 23, 68, 0.4));
+}
+
+.icon-handshake {
+    color: #2979ff;
+    filter: drop-shadow(0 0 5px rgba(41, 121, 255, 0.4));
+}
+
+.trivia-val {
+    font-family: 'Space Grotesk';
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: white;
+    line-height: 1;
+}
+
+.trivia-label {
+    font-size: 0.55rem;
+    color: #666;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+}
+
+.trivia-name {
+    font-size: 0.7rem;
+    color: var(--accent);
+    font-weight: 700;
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    padding: 0 4px;
+}
+
+/* Barra de aproveitamento (Extra para o Líder) */
+.efficiency-bar {
+    width: 80%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    margin: 8px auto 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.efficiency-fill {
+    height: 100%;
+    background: var(--gold);
+    box-shadow: 0 0 10px var(--gold);
+}
+
+/* --- WIDGETS NOVOS (Histórico e MVP) --- */
+
+/* Histórico de Confrontos */
+.match-history-card {
+    background: #111;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.history-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 10px 15px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    border-left: 3px solid transparent;
+}
+
+/* Cores dos Times para a borda */
+.h-chelsea {
+    border-left-color: #034694;
+}
+
+/* Azul Chelsea */
+.h-manchester {
+    border-left-color: #DA291C;
+}
+
+/* Vermelho United */
+.h-draw {
+    border-left-color: #888;
+}
+
+.h-date {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    font-weight: 700;
+    width: 40px;
+}
+
+.h-score {
+    font-family: 'Space Grotesk';
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+.h-winner {
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+.win-chelsea {
+    color: #4fc3f7;
+}
+
+.win-manchester {
+    color: #ff5252;
+}
+
+.win-draw {
+    color: #aaa;
+}
+
+
+/* Destaque da Rodada (MVP) */
+.mvp-section {
+    margin-bottom: 25px;
+}
+
+.mvp-card {
+    background: linear-gradient(135deg, #1a1a1a 0%, #000 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Efeito de brilho de fundo */
+.mvp-card::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(0, 242, 255, 0.2), transparent 70%);
+    pointer-events: none;
+}
+
+.mvp-info {
+    z-index: 2;
+}
+
+.mvp-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mvp-name {
+    font-family: 'Space Grotesk';
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: white;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.mvp-stat {
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.mvp-stat strong {
+    color: white;
+    font-size: 1.1rem;
+}
+
+.mvp-icon {
+    font-size: 2.5rem;
+    color: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Badge de Ranking no Modal */
+.player-rank-badge {
+    background: #333;
+    /* Cor padrão (4º lugar pra baixo) */
+    color: white;
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    /* Fonte maior */
+    margin-bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    letter-spacing: 1px;
+}
+
+/* Cores Especiais para o Top 3 */
+.player-rank-badge.rank-gold {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: black;
+    border: none;
+    box-shadow: 0 10px 20px rgba(255, 215, 0, 0.4);
+    transform: scale(1.1);
+    /* Um pouco maior */
+}
+
+.player-rank-badge.rank-silver {
+    background: linear-gradient(135deg, #E0E0E0, #BDBDBD);
+    color: black;
+    border: none;
+    box-shadow: 0 10px 20px rgba(192, 192, 192, 0.4);
+}
+
+.player-rank-badge.rank-bronze {
+    background: linear-gradient(135deg, #CD7F32, #A0522D);
+    color: white;
+    border: none;
+    box-shadow: 0 10px 20px rgba(205, 127, 50, 0.4);
+}
+
+/* Bolinha para Faltas (Caso apareça no histórico) */
+.h-absent {
+    background: transparent;
+    border: 1px solid #ccc;
+    opacity: 0.5;
+}

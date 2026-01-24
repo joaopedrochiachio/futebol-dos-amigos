@@ -36,38 +36,49 @@ function renderContent() {
     area.innerHTML = '';
 
     // --- DASHBOARD RICO ---
+    // --- DASHBOARD RICO ---
+    // --- DASHBOARD RICO ---
     if (currentMode === 'visao-geral') {
         const sortedClass = [...DADOS.classificacao].sort((a, b) => b.pontos - a.pontos || b.gols - a.gols);
         const lider = sortedClass[0];
         const artilheiro = [...DADOS.classificacao, ...DADOS.goleiros].sort((a, b) => b.gols - a.gols)[0];
-        const melhorGoleiro = [...DADOS.goleiros].sort((a, b) => b.pontos - a.pontos)[0];
 
         // Stats Gerais
-        const rodadaAtual = Math.max(...DADOS.classificacao.map(p => p.jogos));
+        const rodadaAtual = 4; // 4 rodadas jogadas
         const totalGols = [...DADOS.classificacao, ...DADOS.goleiros].reduce((sum, p) => sum + p.gols, 0);
 
-        // Lógica do "Formômetro" (Tendência dos Top 3)
-        let trendHTML = '';
-        sortedClass.slice(0, 3).forEach((p, idx) => {
-            // Pega os últimos 3 jogos (se existirem)
-            const recentHistory = p.historico.slice(-3);
-            let trendIcon = '<i class="fa-solid fa-minus trend-flat trend-arrow"></i>'; // Estável
+        // --- DADOS MANUAIS DA RODADA & HISTÓRICO ---
 
-            if (recentHistory.length >= 2) {
-                // Lógica simples: mais vitórias recentes = subindo
-                const wins = recentHistory.filter(h => h === 3).length;
-                if (wins >= 2) trendIcon = '<i class="fa-solid fa-arrow-trend-up trend-up trend-arrow"></i>';
-                else if (wins === 0 && recentHistory.includes(0)) trendIcon = '<i class="fa-solid fa-arrow-trend-down trend-down trend-arrow"></i>';
-            }
+        // 1. Destaque da Última Rodada (Dados de 24/Jan)
+        // Luan fez 3 gols (maior da rodada)
+        const mvpData = {
+            nome: "Luan",
+            gols: 3,
+            jogos: 1 // Na rodada
+        };
 
-            trendHTML += `
-                <div class="trend-item hover-tilt click-shrink" onclick="openSheet('${p.nome}')">
-                    <div class="trend-info">
-                        <span class="trend-rank">#${idx + 1}</span>
-                        <span class="trend-name">${p.nome}</span>
-                    </div>
-                    <div class="trend-graph">${trendIcon}</div>
-                </div>`;
+        // 2. Histórico de Partidas
+        // Ordem: Mais recente primeiro? Ou Cronológica? Vou colocar do mais recente pro antigo para aparecer o ultimo jogo em cima.
+        // Mas se quiser cronológico (1ª a 4ª rodada), inverta a lista.
+        // Vou usar ordem CRONOLÓGICA (Jan 03 -> Jan 24) como pediu.
+        const matches = [
+            { date: "03/JAN", score: "11 x 3", winner: "CHELSEA", winClass: "win-chelsea", rowClass: "h-chelsea" },
+            { date: "10/JAN", score: "3 x 11", winner: "MANCHESTER", winClass: "win-manchester", rowClass: "h-manchester" },
+            { date: "17/JAN", score: "8 x 8", winner: "EMPATE", winClass: "win-draw", rowClass: "h-draw" },
+            { date: "24/JAN", score: "6 x 4", winner: "CHELSEA", winClass: "win-chelsea", rowClass: "h-chelsea" }
+        ];
+
+        let historyHTML = '';
+        // Inverter para mostrar o mais recente no topo? Geralmente em dashboards sim.
+        // Vou inverter aqui para o último jogo (6x4) aparecer primeiro.
+        [...matches].reverse().forEach(m => {
+            historyHTML += `
+                <div class="history-row ${m.rowClass}">
+                    <span class="h-date">${m.date}</span>
+                    <span class="h-winner ${m.winClass}">${m.winner}</span>
+                    <span class="h-score">${m.score}</span>
+                </div>
+            `;
         });
 
         const html = `
@@ -84,47 +95,45 @@ function renderContent() {
                     </div>
                 </div>
 
-                <div>
-                    <div class="widget-title"><i class="fa-solid fa-crown"></i> Os Titãs da Temporada</div>
-                    <div class="titans-grid">
-                        <div class="titan-card leader hover-tilt click-shrink" onclick="openSheet('${lider.nome}')">
-                            <div class="titan-badge"><i class="fa-solid fa-trophy"></i> LÍDER ATUAL</div>
-                            <div class="titan-content">
-                                <div class="titan-val">${lider.pontos}</div>
-                                <div class="titan-lbl">PONTOS CORRIDOS</div>
-                                <div class="titan-name">${lider.nome}</div>
-                            </div>
+                <div class="section-title" style="margin-top:10px">Líderes Gerais <i class="fa-solid fa-crown"></i></div>
+                <div class="titans-grid">
+                    <div class="titan-card leader hover-tilt click-shrink" onclick="openSheet('${lider.nome}')">
+                        <div class="titan-badge"><i class="fa-solid fa-trophy"></i> LÍDER</div>
+                        <div class="titan-content">
+                            <div class="titan-val">${lider.pontos}</div>
+                            <div class="titan-lbl">PONTOS</div>
+                            <div class="titan-name">${lider.nome}</div>
                         </div>
-                        <div class="titan-card sniper hover-tilt click-shrink" onclick="openSheet('${artilheiro.nome}')">
-                            <div class="titan-badge"><i class="fa-solid fa-crosshairs"></i> ARTILHEIRO</div>
-                            <div class="titan-content">
-                                <div class="titan-val">${artilheiro.gols}</div>
-                                <div class="titan-lbl">GOLS MARCADOS</div>
-                                <div class="titan-name">${artilheiro.nome}</div>
-                            </div>
+                    </div>
+                    <div class="titan-card sniper hover-tilt click-shrink" onclick="openSheet('${artilheiro.nome}')">
+                        <div class="titan-badge"><i class="fa-solid fa-crosshairs"></i> ARTILHEIRO</div>
+                        <div class="titan-content">
+                            <div class="titan-val">${artilheiro.gols}</div>
+                            <div class="titan-lbl">GOLS</div>
+                            <div class="titan-name">${artilheiro.nome}</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="dash-row-grid">
-                    <div class="widget-card hover-tilt click-shrink" onclick="openSheet('${melhorGoleiro.nome}')">
-                         <div class="widget-title"><i class="fa-solid fa-hand-fist"></i> Paredão</div>
-                         <div class="goalie-spotlight">
-                            <div class="goalie-avatar"><i class="fa-solid fa-shield-halved"></i></div>
-                            <div class="goalie-data">
-                                <h3>${melhorGoleiro.nome}</h3>
-                                <div class="goalie-stats">
-                                    <span><strong>${melhorGoleiro.pontos}</strong> Pts</span>
-                                    <span><strong>${melhorGoleiro.jogos}</strong> Jogos</span>
-                                </div>
-                            </div>
-                         </div>
+                <div class="mvp-section">
+                    <div class="widget-title"><i class="fa-solid fa-star"></i> Destaque da Última Rodada</div>
+                    <div class="mvp-card hover-tilt" onclick="openSheet('${mvpData.nome}')">
+                        <div class="mvp-info">
+                            <div class="mvp-label"><i class="fa-solid fa-fire"></i> MVP DA SEMANA</div>
+                            <div class="mvp-name">${mvpData.nome}</div>
+                            <div class="mvp-stat">Marcou <strong>${mvpData.gols}</strong> gols no Sábado</div>
+                        </div>
+                        <div class="mvp-icon">
+                            <i class="fa-solid fa-futbol"></i>
+                        </div>
                     </div>
-                    
-                    <div class="widget-card">
-                        <div class="widget-title"><i class="fa-solid fa-chart-line"></i> Formômetro (Top 3)</div>
-                        <div class="trend-list">
-                            ${trendHTML}
+                </div>
+
+                <div>
+                    <div class="widget-title"><i class="fa-solid fa-timeline"></i> Histórico (Chelsea x Manchester)</div>
+                    <div class="match-history-card">
+                        <div class="history-list">
+                            ${historyHTML}
                         </div>
                     </div>
                 </div>
@@ -132,13 +141,13 @@ function renderContent() {
                  <div class="next-match-banner hover-tilt">
                     <div class="widget-title" style="justify-content: center;"><i class="fa-regular fa-calendar-days"></i> Próximo Confronto</div>
                     <div class="match-time">CALCULANDO...</div>
-                    <div style="color: var(--text-muted); font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;">SÁBADO • 09:00 • </div>
+                    <div style="color: var(--text-muted); font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;">SÁBADO • 09:00 • ARENA</div>
                 </div>
 
             </div>
         `;
         area.innerHTML = html;
-        initInteractiveEffects(); // Nova função global de efeitos
+        initInteractiveEffects();
         startCountdown();
         return;
     }
@@ -215,34 +224,59 @@ function initInteractiveEffects() {
 
 
 function openSheet(name) {
-    const player = [...DADOS.classificacao, ...DADOS.goleiros].find(p => p.nome === name);
+    // 1. Encontra o jogador nos dados
+    const allPlayers = [...DADOS.classificacao, ...DADOS.goleiros];
+    const player = allPlayers.find(p => p.nome === name);
+
     if (!player) return;
 
-    // Determina o ranking geral baseado em pontos
-    let sortedList = [...DADOS.classificacao, ...DADOS.goleiros].sort((a, b) => b.pontos - a.pontos);
+    // 2. Calcula o Ranking Corretamente (Pontos > Gols)
+    // Isso garante que o ranking do modal seja IGUAL ao da tabela
+    const sortedList = allPlayers.sort((a, b) => {
+        if (b.pontos !== a.pontos) return b.pontos - a.pontos; // Quem tem mais pontos ganha
+        return b.gols - a.gols; // Se empatar, quem tem mais gols ganha
+    });
+
     const rank = sortedList.findIndex(p => p.nome === name) + 1;
 
-    document.getElementById('sRank').innerText = `#${rank} GERAL`;
+    // 3. Atualiza os dados no Modal
+    const rankElement = document.getElementById('sRank');
+    rankElement.innerText = `#${rank} GERAL`;
+
+    // Ajusta a cor do badge dependendo da posição
+    rankElement.className = 'player-rank-badge'; // Reset classe
+    if (rank === 1) rankElement.classList.add('rank-gold');
+    else if (rank === 2) rankElement.classList.add('rank-silver');
+    else if (rank === 3) rankElement.classList.add('rank-bronze');
+
     document.getElementById('sName').innerText = player.nome;
-    // Animação dos números no modal
+
+    // Animação dos números
     animateValue('sPoints', 0, player.pontos, 800);
     animateValue('sGames', 0, player.jogos, 600);
     animateValue('sGoals', 0, player.gols, 700);
 
+    // Histórico de Bolinhas
     const hContainer = document.getElementById('sHistory');
     hContainer.innerHTML = '';
     if (player.historico) {
         player.historico.forEach((res, idx) => {
-            let cls = res === 3 ? 'h-win' : (res === 0 ? 'h-loss' : 'h-draw');
+            // Ignora "F" (Faltas) na visualização de bolinhas, ou trata diferente?
+            // Seu padrão atual mostra vitoria/empate/derrota. Vou manter.
+            // Se for 'F', podemos pular ou mostrar cinza. Vou assumir cinza (draw) ou criar classe nova.
+            let cls = 'h-loss'; // Padrão derrota (0)
+            if (res === 3) cls = 'h-win';
+            else if (res === 1) cls = 'h-draw';
+            else if (res === 'F') cls = 'h-absent'; // Nova classe para falta (opcional)
+
             // Adiciona com delay para efeito cascata
-            hContainer.innerHTML += `<div class="h-dot ${cls}" style="animation: slideUp 0.3s backwards ${idx * 0.05}s"></div>`;
+            hContainer.innerHTML += `<div class="h-dot ${cls}" style="animation: slideUp 0.3s backwards ${idx * 0.1}s"></div>`;
         });
     }
 
+    // Abre o Modal com efeito Light
     const sheetCard = document.getElementById('player-sheet').querySelector('.sheet-card');
-    // ADICIONA A CLASSE LIGHT-MODE PARA O EFEITO BRANCO/GLASS
     sheetCard.classList.add('light-mode');
-
     document.getElementById('player-sheet').classList.add('open');
 }
 
