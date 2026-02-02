@@ -44,33 +44,29 @@ function renderContent() {
         const artilheiro = [...DADOS.classificacao, ...DADOS.goleiros].sort((a, b) => b.gols - a.gols)[0];
 
         // Stats Gerais
-        const rodadaAtual = 4; // 4 rodadas jogadas
+        const rodadaAtual = 5;
         const totalGols = [...DADOS.classificacao, ...DADOS.goleiros].reduce((sum, p) => sum + p.gols, 0);
 
         // --- DADOS MANUAIS DA RODADA & HISTÓRICO ---
 
-        // 1. Destaque da Última Rodada (Dados de 24/Jan)
-        // Luan fez 3 gols (maior da rodada)
+        // 1. Destaque da Última Rodada (Dados de 31/Jan)
         const mvpData = {
-            nome: "Luan",
-            gols: 3,
-            jogos: 1 // Na rodada
+            nome: "Edgar",
+            gols: 6,
+            jogos: 3
         };
 
         // 2. Histórico de Partidas
-        // Ordem: Mais recente primeiro? Ou Cronológica? Vou colocar do mais recente pro antigo para aparecer o ultimo jogo em cima.
-        // Mas se quiser cronológico (1ª a 4ª rodada), inverta a lista.
-        // Vou usar ordem CRONOLÓGICA (Jan 03 -> Jan 24) como pediu.
         const matches = [
             { date: "03/JAN", score: "11 x 3", winner: "CHELSEA", winClass: "win-chelsea", rowClass: "h-chelsea" },
             { date: "10/JAN", score: "3 x 11", winner: "MANCHESTER", winClass: "win-manchester", rowClass: "h-manchester" },
             { date: "17/JAN", score: "8 x 8", winner: "EMPATE", winClass: "win-draw", rowClass: "h-draw" },
-            { date: "24/JAN", score: "6 x 4", winner: "CHELSEA", winClass: "win-chelsea", rowClass: "h-chelsea" }
+            { date: "24/JAN", score: "6 x 4", winner: "CHELSEA", winClass: "win-chelsea", rowClass: "h-chelsea" },
+            { date: "31/JAN", score: "9 x 8", winner: "CHELSEA", winClass: "win-chelsea", rowClass: "h-chelsea" }
         ];
 
         let historyHTML = '';
-        // Inverter para mostrar o mais recente no topo? Geralmente em dashboards sim.
-        // Vou inverter aqui para o último jogo (6x4) aparecer primeiro.
+        // Inverter para mostrar o mais recente no topo
         [...matches].reverse().forEach(m => {
             historyHTML += `
                 <div class="history-row ${m.rowClass}">
@@ -121,7 +117,7 @@ function renderContent() {
                         <div class="mvp-info">
                             <div class="mvp-label"><i class="fa-solid fa-fire"></i> MVP DA SEMANA</div>
                             <div class="mvp-name">${mvpData.nome}</div>
-                            <div class="mvp-stat">Marcou <strong>${mvpData.gols}</strong> gols no Sábado</div>
+                            <div class="mvp-stat">Marcou <strong>${mvpData.gols}</strong> gols na Sexta</div>
                         </div>
                         <div class="mvp-icon">
                             <i class="fa-solid fa-futbol"></i>
@@ -130,7 +126,7 @@ function renderContent() {
                 </div>
 
                 <div>
-                    <div class="widget-title"><i class="fa-solid fa-timeline"></i> Histórico (Chelsea x Manchester)</div>
+                    <div class="widget-title"><i class="fa-solid fa-timeline"></i> Histórico de Partidas</div>
                     <div class="match-history-card">
                         <div class="history-list">
                             ${historyHTML}
@@ -138,11 +134,6 @@ function renderContent() {
                     </div>
                 </div>
 
-                 <div class="next-match-banner hover-tilt">
-                    <div class="widget-title" style="justify-content: center;"><i class="fa-regular fa-calendar-days"></i> Próximo Confronto</div>
-                    <div class="match-time">CALCULANDO...</div>
-                    <div style="color: var(--text-muted); font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;">SÁBADO • 09:00 • ARENA</div>
-                </div>
 
             </div>
         `;
@@ -166,7 +157,7 @@ function renderContent() {
         list = [...DADOS.goleiros].sort((a, b) => b.pontos - a.pontos);
     }
 
-    // Pódio com novas classes de interatividade
+    // Pódio
     const top3 = list.slice(0, 3);
     let html = '<div class="podium-container">';
     [1, 0, 2].forEach(idx => {
@@ -182,7 +173,7 @@ function renderContent() {
     });
     html += '</div>';
 
-    // Lista com novas classes de interatividade
+    // Lista Restante
     const rest = list.slice(3);
     html += `<div class="list-container" style="padding-bottom: 20px;">`;
     rest.forEach((p, idx) => {
@@ -198,22 +189,18 @@ function renderContent() {
     });
     html += '</div>';
     area.innerHTML = html;
-    initInteractiveEffects(); // Aplica efeitos nas tabelas também
+    initInteractiveEffects();
 }
 
-// --- INTERATIVIDADE GLOBAL (Tilt 3D em tudo) ---
+// --- INTERATIVIDADE E FUNÇÕES AUXILIARES MANTIDAS IGUAIS ---
 function initInteractiveEffects() {
-    // Seleciona qualquer elemento com a classe .hover-tilt
     const tiltElements = document.querySelectorAll('.hover-tilt');
-
     tiltElements.forEach(el => {
         el.addEventListener('mousemove', (e) => {
             const rect = el.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-            // Cálculo mais sutil para elementos menores
             const xPct = (x / rect.width) - 0.5; const yPct = (y / rect.height) - 0.5;
-            // Rotação reduzida para não ficar enjoativo
             el.style.transform = `perspective(1000px) rotateY(${xPct * 8}deg) rotateX(${yPct * -8}deg) scale(1.01)`;
         });
         el.addEventListener('mouseleave', () => {
@@ -222,59 +209,41 @@ function initInteractiveEffects() {
     });
 }
 
-
 function openSheet(name) {
-    // 1. Encontra o jogador nos dados
     const allPlayers = [...DADOS.classificacao, ...DADOS.goleiros];
     const player = allPlayers.find(p => p.nome === name);
-
     if (!player) return;
 
-    // 2. Calcula o Ranking Corretamente (Pontos > Gols)
-    // Isso garante que o ranking do modal seja IGUAL ao da tabela
     const sortedList = allPlayers.sort((a, b) => {
-        if (b.pontos !== a.pontos) return b.pontos - a.pontos; // Quem tem mais pontos ganha
-        return b.gols - a.gols; // Se empatar, quem tem mais gols ganha
+        if (b.pontos !== a.pontos) return b.pontos - a.pontos;
+        return b.gols - a.gols;
     });
 
     const rank = sortedList.findIndex(p => p.nome === name) + 1;
-
-    // 3. Atualiza os dados no Modal
     const rankElement = document.getElementById('sRank');
     rankElement.innerText = `#${rank} GERAL`;
-
-    // Ajusta a cor do badge dependendo da posição
-    rankElement.className = 'player-rank-badge'; // Reset classe
+    rankElement.className = 'player-rank-badge';
     if (rank === 1) rankElement.classList.add('rank-gold');
     else if (rank === 2) rankElement.classList.add('rank-silver');
     else if (rank === 3) rankElement.classList.add('rank-bronze');
 
     document.getElementById('sName').innerText = player.nome;
-
-    // Animação dos números
     animateValue('sPoints', 0, player.pontos, 800);
     animateValue('sGames', 0, player.jogos, 600);
     animateValue('sGoals', 0, player.gols, 700);
 
-    // Histórico de Bolinhas
     const hContainer = document.getElementById('sHistory');
     hContainer.innerHTML = '';
     if (player.historico) {
         player.historico.forEach((res, idx) => {
-            // Ignora "F" (Faltas) na visualização de bolinhas, ou trata diferente?
-            // Seu padrão atual mostra vitoria/empate/derrota. Vou manter.
-            // Se for 'F', podemos pular ou mostrar cinza. Vou assumir cinza (draw) ou criar classe nova.
-            let cls = 'h-loss'; // Padrão derrota (0)
+            let cls = 'h-loss';
             if (res === 3) cls = 'h-win';
             else if (res === 1) cls = 'h-draw';
-            else if (res === 'F') cls = 'h-absent'; // Nova classe para falta (opcional)
-
-            // Adiciona com delay para efeito cascata
+            else if (res === 'F') cls = 'h-absent';
             hContainer.innerHTML += `<div class="h-dot ${cls}" style="animation: slideUp 0.3s backwards ${idx * 0.1}s"></div>`;
         });
     }
 
-    // Abre o Modal com efeito Light
     const sheetCard = document.getElementById('player-sheet').querySelector('.sheet-card');
     sheetCard.classList.add('light-mode');
     document.getElementById('player-sheet').classList.add('open');
@@ -282,13 +251,11 @@ function openSheet(name) {
 
 function closeSheet() {
     document.getElementById('player-sheet').classList.remove('open');
-    // Remove a classe light-mode depois que fechar para não piscar
     setTimeout(() => {
         document.getElementById('player-sheet').querySelector('.sheet-card').classList.remove('light-mode');
     }, 400);
 }
 
-// Função utilitária para animar números
 function animateValue(id, start, end, duration) {
     const obj = document.getElementById(id);
     if (end === 0) { obj.innerText = "0"; return; }
@@ -303,8 +270,6 @@ function animateValue(id, start, end, duration) {
     window.requestAnimationFrame(step);
 }
 
-
-// Countdown (Mantido, apenas ajustado o seletor)
 let timerInterval;
 function startCountdown() {
     const timeDisplay = document.querySelector('.match-time');
@@ -312,8 +277,8 @@ function startCountdown() {
     if (timerInterval) clearInterval(timerInterval);
     function updateTimer() {
         const now = new Date(); const nextGame = new Date();
-        const daysUntilSat = (6 - now.getDay() + 7) % 7;
-        nextGame.setDate(now.getDate() + daysUntilSat); nextGame.setHours(9, 0, 0, 0);
+        const daysUntilFri = (5 - now.getDay() + 7) % 7; // Ajustado para Sexta (5)
+        nextGame.setDate(now.getDate() + daysUntilFri); nextGame.setHours(19, 0, 0, 0); // Ajustado para 19h
         if (now > nextGame) nextGame.setDate(nextGame.getDate() + 7);
         const diff = nextGame - now;
         const d = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -326,7 +291,6 @@ function startCountdown() {
     timerInterval = setInterval(updateTimer, 1000); updateTimer();
 }
 
-/* BACKGROUND (Mantido mas com blend mode screen no CSS) */
 let particles = [];
 function initParticles() { resizeCanvas(); window.addEventListener('resize', resizeCanvas); for (let i = 0; i < 35; i++) particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4, size: Math.random() * 2.5 + 0.5 }); }
 function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
@@ -334,7 +298,6 @@ function animateParticles() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     particles.forEach(p => {
         p.x += p.vx; p.y += p.vy; if (p.x < 0 || p.x > canvas.width) p.vx *= -1; if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-        // Gradiente nas partículas
         let grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
         grad.addColorStop(0, 'rgba(0, 242, 255, 0.8)'); grad.addColorStop(1, 'rgba(0, 242, 255, 0)');
         ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
