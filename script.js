@@ -44,16 +44,16 @@ function renderContent() {
         const artilheiro = [...DADOS.classificacao, ...DADOS.goleiros].sort((a, b) => b.gols - a.gols)[0];
 
         // Stats Gerais
-        const rodadaAtual = 5;
+        const rodadaAtual = 6;
         const totalGols = [...DADOS.classificacao, ...DADOS.goleiros].reduce((sum, p) => sum + p.gols, 0);
 
         // --- DADOS MANUAIS DA RODADA & HISTÓRICO ---
 
-        // 1. Destaque da Última Rodada (Dados de 31/Jan)
+        // 1. Destaque da Última Rodada (Dados de 07/Fev)
         const mvpData = {
-            nome: "Edgar",
-            gols: 6,
-            jogos: 3
+            nome: "Bruno",
+            gols: 2,
+            jogos: 6
         };
 
         // 2. Histórico de Partidas
@@ -62,7 +62,8 @@ function renderContent() {
             { date: "10/JAN", score: "3 x 11", winner: "MANCHESTER", winClass: "win-manchester", rowClass: "h-manchester" },
             { date: "17/JAN", score: "8 x 8", winner: "EMPATE", winClass: "win-draw", rowClass: "h-draw" },
             { date: "24/JAN", score: "6 x 4", winner: "CHELSEA", winClass: "win-chelsea", rowClass: "h-chelsea" },
-            { date: "31/JAN", score: "9 x 8", winner: "CHELSEA", winClass: "win-chelsea", rowClass: "h-chelsea" }
+            { date: "31/JAN", score: "9 x 8", winner: "CHELSEA", winClass: "win-chelsea", rowClass: "h-chelsea" },
+            { date: "07/FEV", score: "8 x 3", winner: "MANCHESTER", winClass: "win-manchester", rowClass: "h-manchester" }
         ];
 
         let historyHTML = '';
@@ -117,7 +118,7 @@ function renderContent() {
                         <div class="mvp-info">
                             <div class="mvp-label"><i class="fa-solid fa-fire"></i> MVP DA SEMANA</div>
                             <div class="mvp-name">${mvpData.nome}</div>
-                            <div class="mvp-stat">Marcou <strong>${mvpData.gols}</strong> gols na Sexta</div>
+                            <div class="mvp-stat">Marcou <strong>${mvpData.gols}</strong> gols no Sabado</div>
                         </div>
                         <div class="mvp-icon">
                             <i class="fa-solid fa-futbol"></i>
