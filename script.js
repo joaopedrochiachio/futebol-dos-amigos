@@ -36,34 +36,66 @@ function renderContent() {
     area.innerHTML = '';
 
     // --- DASHBOARD RICO ---
-    // --- DASHBOARD RICO ---
-    // --- DASHBOARD RICO ---
     if (currentMode === 'visao-geral') {
         const sortedClass = [...DADOS.classificacao].sort((a, b) => b.pontos - a.pontos || b.gols - a.gols);
         const lider = sortedClass[0];
         const artilheiro = [...DADOS.classificacao, ...DADOS.goleiros].sort((a, b) => b.gols - a.gols)[0];
 
         // Stats Gerais
-        const rodadaAtual = 6;
+        const rodadaAtual = 9;
         const totalGols = [...DADOS.classificacao, ...DADOS.goleiros].reduce((sum, p) => sum + p.gols, 0);
 
         // --- DADOS MANUAIS DA RODADA & HISTÓRICO ---
 
-        // 1. Destaque da Última Rodada (Dados de 07/Fev)
+        // 1. Destaque da Última Rodada (Dados de 21/Fev)
         const mvpData = {
-            nome: "Bruno",
+            nome: "Tampico",
             gols: 2,
-            jogos: 6
+            jogos: 8
         };
 
-        // 2. Histórico de Partidas
+        // 2. Cálculo do TOP 5 Aproveitamento (Pontos + Gols) / Jogos
+        const jogadoresAtivos = [...DADOS.classificacao].filter(p => p.jogos > 0);
+        const top5 = jogadoresAtivos.map(p => {
+            const aproveitamentoPts = (p.pontos / (p.jogos * 3)) * 100;
+            const mediaGols = p.gols / p.jogos;
+            const indice = (p.pontos + p.gols) / p.jogos; // Índice de eficiência
+            return { ...p, aproveitamentoPts, mediaGols, indice };
+        }).sort((a, b) => b.indice - a.indice).slice(0, 5);
+
+        let top5HTML = '';
+        top5.forEach((p, idx) => {
+            top5HTML += `
+                <div class="list-row hover-tilt click-shrink" onclick="openSheet('${p.nome}')" style="margin-bottom: 10px; padding: 12px 15px;">
+                    <div style="display:flex; align-items:center; gap:15px;">
+                        <span class="r-pos" style="background: rgba(0, 242, 255, 0.15); color: var(--primary); font-size: 1.1rem; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: 800;">${idx + 1}</span>
+                        <div style="display:flex; flex-direction:column; gap: 4px;">
+                            <span class="r-name" style="font-size: 1rem; line-height: 1;">${p.nome}</span>
+                            <span style="font-size: 0.75rem; color: #a0a0a0; line-height: 1;">
+                                <i class="fa-solid fa-chart-simple" style="color:var(--primary)"></i> ${p.aproveitamentoPts.toFixed(1)}% Pts &nbsp;|&nbsp; 
+                                <i class="fa-solid fa-futbol" style="color:#fff"></i> ${p.mediaGols.toFixed(2)} Gols/J
+                            </span>
+                        </div>
+                    </div>
+                    <div style="text-align: right; display:flex; flex-direction:column; align-items:flex-end;">
+                        <span class="r-val" style="color: var(--primary); font-size: 1.2rem; line-height: 1;">${p.indice.toFixed(2)}</span>
+                        <span style="font-size: 0.6rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">Índice</span>
+                    </div>
+                </div>
+            `;
+        });
+
+        // 3. Histórico de Partidas
         const matches = [
             { date: "03/JAN", score: "11 x 3", winner: "CHELSEA", winClass: "win-chelsea", rowClass: "h-chelsea" },
             { date: "10/JAN", score: "3 x 11", winner: "MANCHESTER", winClass: "win-manchester", rowClass: "h-manchester" },
             { date: "17/JAN", score: "8 x 8", winner: "EMPATE", winClass: "win-draw", rowClass: "h-draw" },
             { date: "24/JAN", score: "6 x 4", winner: "CHELSEA", winClass: "win-chelsea", rowClass: "h-chelsea" },
             { date: "31/JAN", score: "9 x 8", winner: "CHELSEA", winClass: "win-chelsea", rowClass: "h-chelsea" },
-            { date: "07/FEV", score: "8 x 3", winner: "MANCHESTER", winClass: "win-manchester", rowClass: "h-manchester" }
+            { date: "07/FEV", score: "8 x 3", winner: "MANCHESTER", winClass: "win-manchester", rowClass: "h-manchester" },
+            { date: "14/FEV", score: "11 x 4", winner: "MANCHESTER", winClass: "win-manchester", rowClass: "h-manchester" },
+            { date: "17/FEV", score: "6 x 4", winner: "MANCHESTER", winClass: "win-manchester", rowClass: "h-manchester" },
+            { date: "21/FEV", score: "11 x 6", winner: "MANCHESTER", winClass: "win-manchester", rowClass: "h-manchester" }
         ];
 
         let historyHTML = '';
@@ -126,15 +158,20 @@ function renderContent() {
                     </div>
                 </div>
 
-                <div>
-                    <div class="widget-title"><i class="fa-solid fa-timeline"></i> Histórico de Partidas</div>
+                <div class="top5-section" style="margin-top: 25px;">
+                    <div class="widget-title"><i class="fa-solid fa-chart-pie"></i> Top 5 Aproveitamento</div>
+                    <div style="background: transparent;">
+                        ${top5HTML}
+                    </div>
+                </div>
+
+                <div style="margin-top: 45px;"> <div class="widget-title"><i class="fa-solid fa-timeline"></i> Histórico de Partidas</div>
                     <div class="match-history-card">
                         <div class="history-list">
                             ${historyHTML}
                         </div>
                     </div>
                 </div>
-
 
             </div>
         `;
@@ -193,7 +230,6 @@ function renderContent() {
     initInteractiveEffects();
 }
 
-// --- INTERATIVIDADE E FUNÇÕES AUXILIARES MANTIDAS IGUAIS ---
 function initInteractiveEffects() {
     const tiltElements = document.querySelectorAll('.hover-tilt');
     tiltElements.forEach(el => {
@@ -278,8 +314,8 @@ function startCountdown() {
     if (timerInterval) clearInterval(timerInterval);
     function updateTimer() {
         const now = new Date(); const nextGame = new Date();
-        const daysUntilFri = (5 - now.getDay() + 7) % 7; // Ajustado para Sexta (5)
-        nextGame.setDate(now.getDate() + daysUntilFri); nextGame.setHours(19, 0, 0, 0); // Ajustado para 19h
+        const daysUntilFri = (5 - now.getDay() + 7) % 7;
+        nextGame.setDate(now.getDate() + daysUntilFri); nextGame.setHours(19, 0, 0, 0);
         if (now > nextGame) nextGame.setDate(nextGame.getDate() + 7);
         const diff = nextGame - now;
         const d = Math.floor(diff / (1000 * 60 * 60 * 24));
