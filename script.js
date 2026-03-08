@@ -5,6 +5,10 @@ const ctx = canvas.getContext('2d');
 document.addEventListener("DOMContentLoaded", () => {
     initParticles();
     animateParticles();
+
+    // Injeta os estilos da Arena VS dinamicamente
+    injectVSStyles();
+
     switchTab('visao-geral');
 
     // Fechar modal ao clicar fora
@@ -12,6 +16,84 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target === e.currentTarget) closeSheet();
     });
 });
+
+function injectVSStyles() {
+    if (document.getElementById('vs-arena-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'vs-arena-styles';
+    style.innerHTML = `
+        .vs-arena {
+            background: linear-gradient(180deg, #111 0%, #050505 100%);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 25px 15px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
+        }
+        .vs-arena::before {
+            content: ''; position: absolute; top: -50px; left: 50%; transform: translateX(-50%);
+            width: 200px; height: 100px; background: radial-gradient(circle, rgba(255,77,0,0.15) 0%, transparent 70%); pointer-events: none;
+        }
+        .vs-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; position: relative;
+        }
+        .vs-player-box {
+            width: 40%; text-align: center; position: relative;
+        }
+        .vs-select {
+            width: 100%; appearance: none; background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.1);
+            color: white; padding: 12px 10px; border-radius: 12px; font-weight: 900; font-family: 'Space Grotesk';
+            font-size: 0.95rem; text-align: center; cursor: pointer; outline: none; transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        /* Correção para o seletor não ficar todo branco */
+        .vs-select option {
+            background-color: #111; 
+            color: white;
+            font-weight: bold;
+        }
+        
+        .p1-box .vs-select { border-color: rgba(0, 242, 255, 0.4); text-shadow: 0 0 10px rgba(0, 242, 255, 0.5); }
+        .p2-box .vs-select { border-color: rgba(255, 204, 0, 0.4); text-shadow: 0 0 10px rgba(255, 204, 0, 0.5); }
+        .p1-box .vs-select:focus { border-color: var(--accent); box-shadow: 0 0 20px rgba(0, 242, 255, 0.3); }
+        .p2-box .vs-select:focus { border-color: var(--gold); box-shadow: 0 0 20px rgba(255, 204, 0, 0.3); }
+        
+        .vs-badge {
+            font-family: 'Space Grotesk'; font-weight: 900; color: var(--fire); font-size: 1.8rem;
+            text-shadow: 0 0 20px rgba(255, 77, 0, 0.8), 0 0 40px rgba(255, 77, 0, 0.4);
+            animation: pulseVS 2s infinite; z-index: 2;
+        }
+        
+        .stat-row {
+            display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+        }
+        .stat-label-center {
+            width: 70px; text-align: center; font-size: 0.65rem; color: #888; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 1px; line-height: 1.2;
+        }
+        .bar-container {
+            flex: 1; height: 22px; background: rgba(255,255,255,0.03); display: flex; align-items: center;
+            border-radius: 6px; position: relative;
+        }
+        .bar-left { justify-content: flex-end; border-right: 1px solid rgba(255,255,255,0.1); }
+        .bar-right { justify-content: flex-start; border-left: 1px solid rgba(255,255,255,0.1); }
+        
+        .bar-fill {
+            height: 100%; display: flex; align-items: center; font-family: 'Space Grotesk'; font-weight: 900; font-size: 0.85rem;
+            color: #000; transition: width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .fill-p1 { background: linear-gradient(90deg, #0088ff, var(--accent)); justify-content: flex-start; padding-left: 8px; border-radius: 6px 0 0 6px; box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); overflow:hidden;}
+        .fill-p2 { background: linear-gradient(90deg, var(--gold), #ff8800); justify-content: flex-end; padding-right: 8px; border-radius: 0 6px 6px 0; box-shadow: 0 0 15px rgba(255, 204, 0, 0.4); overflow:hidden;}
+        
+        @keyframes pulseVS {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; text-shadow: 0 0 30px rgba(255, 77, 0, 1); }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+    `;
+    document.head.appendChild(style);
+}
 
 function switchTab(mode) {
     currentMode = mode;
@@ -21,7 +103,6 @@ function switchTab(mode) {
     buttons.forEach((btn, index) => {
         if (btn.getAttribute('onclick').includes(mode)) {
             btn.classList.add('active');
-            // Movimento mais elástico do glider
             glider.style.transform = `translateX(${index * 100}%) scaleX(1.1)`;
             setTimeout(() => { glider.style.transform = `translateX(${index * 100}%) scaleX(1)`; }, 200);
         } else {
@@ -31,35 +112,87 @@ function switchTab(mode) {
     renderContent();
 }
 
+// --- LÓGICA DA BATALHA INTERATIVA ---
+window.updateBatalha = function () {
+    if (!window.APP_PLAYERS) return;
+    const p1Name = document.getElementById('vs-p1').value;
+    const p2Name = document.getElementById('vs-p2').value;
+
+    // Busca os jogadores apenas se a seleção não for vazia
+    const p1 = p1Name ? window.APP_PLAYERS.find(p => p.nome === p1Name) : null;
+    const p2 = p2Name ? window.APP_PLAYERS.find(p => p.nome === p2Name) : null;
+
+    // Se nenhum jogador for selecionado de um lado, os status desse lado ficam 0
+    const stats1 = p1 ? {
+        pts: p1.pontos,
+        gols: p1.gols || 0,
+        jogos: p1.jogos,
+        aprov: p1.jogos > 0 ? ((p1.pontos / (p1.jogos * 3)) * 100) : 0
+    } : { pts: 0, gols: 0, jogos: 0, aprov: 0 };
+
+    const stats2 = p2 ? {
+        pts: p2.pontos,
+        gols: p2.gols || 0,
+        jogos: p2.jogos,
+        aprov: p2.jogos > 0 ? ((p2.pontos / (p2.jogos * 3)) * 100) : 0
+    } : { pts: 0, gols: 0, jogos: 0, aprov: 0 };
+
+    const maxPts = Math.max(stats1.pts, stats2.pts, 1);
+    const maxGols = Math.max(stats1.gols, stats2.gols, 1);
+    const maxJogos = Math.max(stats1.jogos, stats2.jogos, 1);
+    const maxAprov = 100; // Aproveitamento máximo é sempre 100%
+
+    // Atualiza as barras
+    updateBar('pts', stats1.pts, stats2.pts, maxPts, false);
+    updateBar('gols', stats1.gols, stats2.gols, maxGols, false);
+    updateBar('jogos', stats1.jogos, stats2.jogos, maxJogos, false);
+    updateBar('aprov', stats1.aprov, stats2.aprov, maxAprov, true);
+};
+
+function updateBar(statId, val1, val2, maxVal, isPercent) {
+    const bar1 = document.getElementById(`bar-p1-${statId}`);
+    const bar2 = document.getElementById(`bar-p2-${statId}`);
+
+    // Se não há valor, a barra fica invisível em 0%. 
+    // Se há, garante um mínimo de 5% de largura para o número caber no visual
+    const pct1 = val1 === 0 ? 0 : Math.max((val1 / maxVal) * 100, 5);
+    const pct2 = val2 === 0 ? 0 : Math.max((val2 / maxVal) * 100, 5);
+
+    bar1.style.width = pct1 + '%';
+    bar2.style.width = pct2 + '%';
+
+    // Se o valor for 0, oculta o número na tela inicial para ficar "limpo"
+    const display1 = val1 === 0 ? "" : (isPercent ? val1.toFixed(1) + '%' : val1);
+    const display2 = val2 === 0 ? "" : (isPercent ? val2.toFixed(1) + '%' : val2);
+
+    bar1.innerText = display1;
+    bar2.innerText = display2;
+}
+
 function renderContent() {
     const area = document.getElementById('content-area');
     area.innerHTML = '';
 
-    // --- DASHBOARD RICO ---
+    const classificacaoSegura = DADOS.classificacao || [];
+    const goleirosSeguros = DADOS.goleiros || [];
+    const todosJogadores = [...classificacaoSegura, ...goleirosSeguros];
+    window.APP_PLAYERS = todosJogadores;
+
     if (currentMode === 'visao-geral') {
-        const sortedClass = [...DADOS.classificacao].sort((a, b) => b.pontos - a.pontos || b.gols - a.gols);
-        const lider = sortedClass[0];
-        const artilheiro = [...DADOS.classificacao, ...DADOS.goleiros].sort((a, b) => b.gols - a.gols)[0];
+        const sortedClass = [...classificacaoSegura].sort((a, b) => b.pontos - a.pontos || b.gols - a.gols);
+        const lider = sortedClass[0] || { nome: "N/A", pontos: 0, gols: 0 };
+        const artilheiro = [...todosJogadores].sort((a, b) => b.gols - a.gols)[0] || { nome: "N/A", gols: 0 };
 
-        // Stats Gerais
-        const rodadaAtual = 9;
-        const totalGols = [...DADOS.classificacao, ...DADOS.goleiros].reduce((sum, p) => sum + p.gols, 0);
+        const rodadaAtual = 11;
+        const totalGols = todosJogadores.reduce((sum, p) => sum + (p.gols || 0), 0);
 
-        // --- DADOS MANUAIS DA RODADA & HISTÓRICO ---
+        const mvpData = { nome: "Jorge", gols: 5, jogos: 8 };
 
-        // 1. Destaque da Última Rodada (Dados de 21/Fev)
-        const mvpData = {
-            nome: "Tampico",
-            gols: 2,
-            jogos: 8
-        };
-
-        // 2. Cálculo do TOP 5 Aproveitamento (Pontos + Gols) / Jogos
-        const jogadoresAtivos = [...DADOS.classificacao].filter(p => p.jogos > 0);
+        const jogadoresAtivos = [...classificacaoSegura].filter(p => p.jogos > 0);
         const top5 = jogadoresAtivos.map(p => {
             const aproveitamentoPts = (p.pontos / (p.jogos * 3)) * 100;
             const mediaGols = p.gols / p.jogos;
-            const indice = (p.pontos + p.gols) / p.jogos; // Índice de eficiência
+            const indice = (p.pontos + p.gols) / p.jogos;
             return { ...p, aproveitamentoPts, mediaGols, indice };
         }).sort((a, b) => b.indice - a.indice).slice(0, 5);
 
@@ -85,29 +218,11 @@ function renderContent() {
             `;
         });
 
-        // 3. Histórico de Partidas
-        const matches = [
-            { date: "03/JAN", score: "11 x 3", winner: "CHELSEA", winClass: "win-chelsea", rowClass: "h-chelsea" },
-            { date: "10/JAN", score: "3 x 11", winner: "MANCHESTER", winClass: "win-manchester", rowClass: "h-manchester" },
-            { date: "17/JAN", score: "8 x 8", winner: "EMPATE", winClass: "win-draw", rowClass: "h-draw" },
-            { date: "24/JAN", score: "6 x 4", winner: "CHELSEA", winClass: "win-chelsea", rowClass: "h-chelsea" },
-            { date: "31/JAN", score: "9 x 8", winner: "CHELSEA", winClass: "win-chelsea", rowClass: "h-chelsea" },
-            { date: "07/FEV", score: "8 x 3", winner: "MANCHESTER", winClass: "win-manchester", rowClass: "h-manchester" },
-            { date: "14/FEV", score: "11 x 4", winner: "MANCHESTER", winClass: "win-manchester", rowClass: "h-manchester" },
-            { date: "17/FEV", score: "6 x 4", winner: "MANCHESTER", winClass: "win-manchester", rowClass: "h-manchester" },
-            { date: "21/FEV", score: "11 x 6", winner: "MANCHESTER", winClass: "win-manchester", rowClass: "h-manchester" }
-        ];
-
-        let historyHTML = '';
-        // Inverter para mostrar o mais recente no topo
-        [...matches].reverse().forEach(m => {
-            historyHTML += `
-                <div class="history-row ${m.rowClass}">
-                    <span class="h-date">${m.date}</span>
-                    <span class="h-winner ${m.winClass}">${m.winner}</span>
-                    <span class="h-score">${m.score}</span>
-                </div>
-            `;
+        // Configuração Menu Arena VS: Começa com opção "Selecione..." vazia
+        let optionsHTML = '<option value="" disabled selected>Selecione...</option>';
+        const playersForSelect = [...todosJogadores].sort((a, b) => b.nome.localeCompare(a.nome));
+        playersForSelect.forEach(p => {
+            optionsHTML += `<option value="${p.nome}">${p.nome}</option>`;
         });
 
         const html = `
@@ -150,7 +265,7 @@ function renderContent() {
                         <div class="mvp-info">
                             <div class="mvp-label"><i class="fa-solid fa-fire"></i> MVP DA SEMANA</div>
                             <div class="mvp-name">${mvpData.nome}</div>
-                            <div class="mvp-stat">Marcou <strong>${mvpData.gols}</strong> gols no Sabado</div>
+                            <div class="mvp-stat">Marcou <strong>${mvpData.gols}</strong> gols na última rodada!</div>
                         </div>
                         <div class="mvp-icon">
                             <i class="fa-solid fa-futbol"></i>
@@ -165,11 +280,64 @@ function renderContent() {
                     </div>
                 </div>
 
-                <div style="margin-top: 45px;"> <div class="widget-title"><i class="fa-solid fa-timeline"></i> Histórico de Partidas</div>
-                    <div class="match-history-card">
-                        <div class="history-list">
-                            ${historyHTML}
+                <div style="margin-top: 35px; margin-bottom: 30px;">
+                    <div class="widget-title"><i class="fa-solid fa-gamepad"></i> Arena Head-to-Head</div>
+                    
+                    <div class="vs-arena">
+                        <div class="vs-header">
+                            <div class="vs-player-box p1-box">
+                                <select id="vs-p1" class="vs-select" onchange="window.updateBatalha()">
+                                    ${optionsHTML}
+                                </select>
+                            </div>
+                            <div class="vs-badge">VS</div>
+                            <div class="vs-player-box p2-box">
+                                <select id="vs-p2" class="vs-select" onchange="window.updateBatalha()">
+                                    ${optionsHTML}
+                                </select>
+                            </div>
                         </div>
+
+                        <div class="stat-row">
+                            <div class="bar-container bar-left">
+                                <div id="bar-p1-pts" class="bar-fill fill-p1" style="width: 0%;"></div>
+                            </div>
+                            <div class="stat-label-center">Pontos<br>Totais</div>
+                            <div class="bar-container bar-right">
+                                <div id="bar-p2-pts" class="bar-fill fill-p2" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="stat-row">
+                            <div class="bar-container bar-left">
+                                <div id="bar-p1-gols" class="bar-fill fill-p1" style="width: 0%;"></div>
+                            </div>
+                            <div class="stat-label-center">Bolas na<br>Rede</div>
+                            <div class="bar-container bar-right">
+                                <div id="bar-p2-gols" class="bar-fill fill-p2" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="stat-row">
+                            <div class="bar-container bar-left">
+                                <div id="bar-p1-aprov" class="bar-fill fill-p1" style="width: 0%;"></div>
+                            </div>
+                            <div class="stat-label-center">Aprov.<br>Pts (%)</div>
+                            <div class="bar-container bar-right">
+                                <div id="bar-p2-aprov" class="bar-fill fill-p2" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-row" style="margin-bottom: 0;">
+                            <div class="bar-container bar-left">
+                                <div id="bar-p1-jogos" class="bar-fill fill-p1" style="width: 0%;"></div>
+                            </div>
+                            <div class="stat-label-center">Presença<br>(Jogos)</div>
+                            <div class="bar-container bar-right">
+                                <div id="bar-p2-jogos" class="bar-fill fill-p2" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -178,6 +346,11 @@ function renderContent() {
         area.innerHTML = html;
         initInteractiveEffects();
         startCountdown();
+
+        // Roda a batalha uma vez para garantir que as barras iniciem vazias e bonitas
+        setTimeout(() => {
+            window.updateBatalha();
+        }, 150);
         return;
     }
 
@@ -187,15 +360,14 @@ function renderContent() {
     let unitLabel = 'PTS';
 
     if (currentMode === 'classificacao') {
-        list = [...DADOS.classificacao].sort((a, b) => b.pontos - a.pontos || b.gols - a.gols);
+        list = [...classificacaoSegura].sort((a, b) => b.pontos - a.pontos || b.gols - a.gols);
     } else if (currentMode === 'artilharia') {
-        list = [...DADOS.classificacao, ...DADOS.goleiros].sort((a, b) => b.gols - a.gols);
+        list = [...todosJogadores].sort((a, b) => b.gols - a.gols);
         valueKey = 'gols'; unitLabel = 'GOLS';
     } else {
-        list = [...DADOS.goleiros].sort((a, b) => b.pontos - a.pontos);
+        list = [...goleirosSeguros].sort((a, b) => b.pontos - a.pontos);
     }
 
-    // Pódio
     const top3 = list.slice(0, 3);
     let html = '<div class="podium-container">';
     [1, 0, 2].forEach(idx => {
@@ -211,7 +383,6 @@ function renderContent() {
     });
     html += '</div>';
 
-    // Lista Restante
     const rest = list.slice(3);
     html += `<div class="list-container" style="padding-bottom: 20px;">`;
     rest.forEach((p, idx) => {
@@ -247,7 +418,9 @@ function initInteractiveEffects() {
 }
 
 function openSheet(name) {
-    const allPlayers = [...DADOS.classificacao, ...DADOS.goleiros];
+    const classificacaoSegura = DADOS.classificacao || [];
+    const goleirosSeguros = DADOS.goleiros || [];
+    const allPlayers = [...classificacaoSegura, ...goleirosSeguros];
     const player = allPlayers.find(p => p.nome === name);
     if (!player) return;
 
@@ -267,7 +440,7 @@ function openSheet(name) {
     document.getElementById('sName').innerText = player.nome;
     animateValue('sPoints', 0, player.pontos, 800);
     animateValue('sGames', 0, player.jogos, 600);
-    animateValue('sGoals', 0, player.gols, 700);
+    animateValue('sGoals', 0, player.gols || 0, 700);
 
     const hContainer = document.getElementById('sHistory');
     hContainer.innerHTML = '';
@@ -295,7 +468,7 @@ function closeSheet() {
 
 function animateValue(id, start, end, duration) {
     const obj = document.getElementById(id);
-    if (end === 0) { obj.innerText = "0"; return; }
+    if (end === 0 || !end) { obj.innerText = "0"; return; }
     let startTimestamp = null;
     const step = (timestamp) => {
         if (!startTimestamp) startTimestamp = timestamp;
