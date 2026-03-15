@@ -183,10 +183,11 @@ function renderContent() {
         const lider = sortedClass[0] || { nome: "N/A", pontos: 0, gols: 0 };
         const artilheiro = [...todosJogadores].sort((a, b) => b.gols - a.gols)[0] || { nome: "N/A", gols: 0 };
 
-        const rodadaAtual = 11;
+        const rodadaAtual = 12;
         const totalGols = todosJogadores.reduce((sum, p) => sum + (p.gols || 0), 0);
 
-        const mvpData = { nome: "Jorge", gols: 5, jogos: 8 };
+        // Atualizado para o Jorge com 5 gols na rodada 12
+        const mvpData = { nome: "Jorge", gols: 5, jogos: 9 };
 
         const jogadoresAtivos = [...classificacaoSegura].filter(p => p.jogos > 0);
         const top5 = jogadoresAtivos.map(p => {
@@ -265,7 +266,7 @@ function renderContent() {
                         <div class="mvp-info">
                             <div class="mvp-label"><i class="fa-solid fa-fire"></i> MVP DA SEMANA</div>
                             <div class="mvp-name">${mvpData.nome}</div>
-                            <div class="mvp-stat">Marcou <strong>${mvpData.gols}</strong> gols na última rodada!</div>
+                            <div class="mvp-stat">Marcou impressionantes <strong>${mvpData.gols}</strong> gols na última rodada!</div>
                         </div>
                         <div class="mvp-icon">
                             <i class="fa-solid fa-futbol"></i>
