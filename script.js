@@ -183,11 +183,11 @@ function renderContent() {
         const lider = sortedClass[0] || { nome: "N/A", pontos: 0, gols: 0 };
         const artilheiro = [...todosJogadores].sort((a, b) => b.gols - a.gols)[0] || { nome: "N/A", gols: 0 };
 
-        const rodadaAtual = 13;
+        const rodadaAtual = 15;
         const totalGols = todosJogadores.reduce((sum, p) => sum + (p.gols || 0), 0);
 
-        // Atualizado para o Jorge com 4 gols na rodada 13
-        const mvpData = { nome: "Jorge", gols: 4, jogos: 10 };
+        // Atualizado para o Andrey com 4 gols na rodada 15
+        const mvpData = { nome: "Andrey", gols: 4, jogos: 11 };
 
         const jogadoresAtivos = [...classificacaoSegura].filter(p => p.jogos > 0);
         const top5 = jogadoresAtivos.map(p => {
