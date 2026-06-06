@@ -187,7 +187,7 @@ function renderContent() {
         const totalGols = todosJogadores.reduce((sum, p) => sum + (p.gols || 0), 0);
 
         // Destaque da rodada mais recente
-        const mvpData = { nome: "Tampico", gols: 5, jogos: 17 };
+        const mvpData = { nome: "Bruno", gols: 3, jogos: 23 };
 
         const jogadoresAtivos = [...classificacaoSegura].filter(p => p.jogos > 0);
         const top5 = jogadoresAtivos.map(p => {
