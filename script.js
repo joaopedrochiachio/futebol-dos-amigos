@@ -2,7 +2,9 @@ let currentMode = 'visao-geral';
 const canvas = document.getElementById('particle-canvas');
 const ctx = canvas.getContext('2d');
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    await carregarDadosTemporada();
+
     initParticles();
     animateParticles();
 
@@ -16,6 +18,31 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target === e.currentTarget) closeSheet();
     });
 });
+
+async function carregarDadosTemporada() {
+    if (window.location.protocol === 'file:') {
+        window.DADOS_ORIGEM = 'dados-js-gerado';
+        return;
+    }
+
+    if (typeof window.carregarDadosDaPlanilha !== 'function') {
+        window.DADOS_ORIGEM = 'fallback-dados-js';
+        return;
+    }
+
+    try {
+        const dadosDaPlanilha = await window.carregarDadosDaPlanilha();
+        if (dadosDaPlanilha) {
+            DADOS = dadosDaPlanilha;
+            window.DADOS = dadosDaPlanilha;
+            window.DADOS_ORIGEM = 'planilha';
+            console.info('Dados carregados da planilha:', window.DADOS_PLANILHA_ARQUIVO || 'Pontuação 2026.xlsx', DADOS.meta);
+        }
+    } catch (error) {
+        window.DADOS_ORIGEM = 'fallback-dados-js';
+        console.warn('Usando dados.js como fallback:', error);
+    }
+}
 
 function injectVSStyles() {
     if (document.getElementById('vs-arena-styles')) return;
@@ -183,11 +210,14 @@ function renderContent() {
         const lider = sortedClass[0] || { nome: "N/A", pontos: 0, gols: 0 };
         const artilheiro = [...todosJogadores].sort((a, b) => b.gols - a.gols)[0] || { nome: "N/A", gols: 0 };
 
-        const rodadaAtual = 16;
+        const rodadaAtual = DADOS.meta?.rodadaAtual || Math.max(...todosJogadores.map(p => p.historico?.length || 0), 0);
         const totalGols = todosJogadores.reduce((sum, p) => sum + (p.gols || 0), 0);
 
         // Destaque da rodada mais recente
-        const mvpData = { nome: "Bruno", gols: 3, jogos: 23 };
+        const mvpData = DADOS.meta?.destaque || { nome: artilheiro.nome, gols: artilheiro.gols || 0, jogos: artilheiro.jogos || 0 };
+        const mvpTexto = mvpData.gols === 1
+            ? 'Marcou <strong>1</strong> gol na última rodada!'
+            : `Marcou impressionantes <strong>${mvpData.gols}</strong> gols na última rodada!`;
 
         const jogadoresAtivos = [...classificacaoSegura].filter(p => p.jogos > 0);
         const top5 = jogadoresAtivos.map(p => {
@@ -266,7 +296,7 @@ function renderContent() {
                         <div class="mvp-info">
                             <div class="mvp-label"><i class="fa-solid fa-fire"></i> MVP DA SEMANA</div>
                             <div class="mvp-name">${mvpData.nome}</div>
-                            <div class="mvp-stat">Marcou impressionantes <strong>${mvpData.gols}</strong> gols na última rodada!</div>
+                            <div class="mvp-stat">${mvpTexto}</div>
                         </div>
                         <div class="mvp-icon">
                             <i class="fa-solid fa-futbol"></i>
