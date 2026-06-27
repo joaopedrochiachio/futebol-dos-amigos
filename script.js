@@ -389,22 +389,29 @@ function renderContent() {
     let list = [];
     let valueKey = 'pontos';
     let unitLabel = 'PTS';
+    let boardTitle = 'Tabela Geral';
+    let boardIcon = 'fa-table-list';
 
     if (currentMode === 'classificacao') {
         list = [...classificacaoSegura].sort((a, b) => b.pontos - a.pontos || b.gols - a.gols);
     } else if (currentMode === 'artilharia') {
         list = [...todosJogadores].sort((a, b) => b.gols - a.gols);
-        valueKey = 'gols'; unitLabel = 'GOLS';
+        valueKey = 'gols'; unitLabel = 'GOLS'; boardTitle = 'Artilharia'; boardIcon = 'fa-futbol';
     } else {
         list = [...goleirosSeguros].sort((a, b) => b.pontos - a.pontos);
+        boardTitle = 'Goleiros'; boardIcon = 'fa-shield-halved';
     }
 
     const top3 = list.slice(0, 3);
-    let html = '<div class="podium-container">';
+    const mediaPontos = list.length ? (list.reduce((sum, p) => sum + (p.pontos || 0), 0) / list.length).toFixed(1) : '0.0';
+    const totalJogos = list.reduce((sum, p) => sum + (p.jogos || 0), 0);
+    const totalValor = list.reduce((sum, p) => sum + (p[valueKey] || 0), 0);
+
+    let podiumHTML = '<div class="podium-container">';
     [1, 0, 2].forEach(idx => {
         if (!top3[idx]) return;
         const p = top3[idx]; const rank = idx + 1;
-        html += `
+        podiumHTML += `
             <div class="podium-card rank-${rank} hover-tilt click-shrink" onclick="openSheet('${p.nome}')">
                 ${rank === 1 ? '<i class="fa-solid fa-crown crown"></i>' : ''}
                 <div class="p-avatar">#${rank}</div>
@@ -412,24 +419,127 @@ function renderContent() {
                 <div class="p-name">${p.nome}</div>
             </div>`;
     });
-    html += '</div>';
+    podiumHTML += '</div>';
 
-    const rest = list.slice(3);
-    html += `<div class="list-container" style="padding-bottom: 20px;">`;
-    rest.forEach((p, idx) => {
-        const rank = idx + 4;
-        html += `
-            <div class="list-row hover-tilt click-shrink" onclick="openSheet('${p.nome}')">
-                <div style="display:flex; align-items:center; gap:15px;">
-                    <span class="r-pos">${rank}</span>
-                    <span class="r-name">${p.nome}</span>
+    const html = `
+        <section class="board-shell">
+            <div class="board-hero">
+                <div class="board-title-wrap">
+                    <div class="board-kicker"><i class="fa-solid ${boardIcon}"></i> TEMPORADA 2026</div>
+                    <h2>${boardTitle}</h2>
                 </div>
-                <span class="r-val">${p[valueKey]} <span style="font-size:0.7rem; opacity:0.6;">${unitLabel}</span></span>
-            </div>`;
-    });
-    html += '</div>';
+                <div class="board-summary">
+                    <div><span>${list.length}</span><small>Atletas</small></div>
+                    <div><span>${totalValor}</span><small>${unitLabel}</small></div>
+                    <div><span>${totalJogos}</span><small>Jogos</small></div>
+                    <div><span>${mediaPontos}</span><small>Media Pts</small></div>
+                </div>
+            </div>
+
+            <div class="board-grid">
+                <aside class="board-podium-panel">
+                    ${podiumHTML}
+                </aside>
+                ${renderMacroTable(list, valueKey, unitLabel, currentMode)}
+            </div>
+        </section>
+    `;
     area.innerHTML = html;
     initInteractiveEffects();
+}
+
+function renderMacroTable(list, valueKey, unitLabel, mode) {
+    const leaderValue = Math.max(...list.map(p => p[valueKey] || 0), 1);
+    const rows = list.map((p, idx) => {
+        const rank = idx + 1;
+        const aproveitamento = getAproveitamento(p);
+        const mediaGols = p.jogos > 0 ? ((p.gols || 0) / p.jogos).toFixed(2) : '0.00';
+        const barWidth = Math.max(((p[valueKey] || 0) / leaderValue) * 100, 4);
+        const rankClass = rank <= 3 ? `rank-top-${rank}` : '';
+
+        return `
+            <tr class="macro-row click-shrink ${rankClass}" onclick="openSheet('${p.nome}')">
+                <td class="macro-rank">#${rank}</td>
+                <td class="macro-player">
+                    <span class="macro-avatar">${getInitials(p.nome)}</span>
+                    <span>
+                        <strong>${p.nome}</strong>
+                        <small>${renderRecentForm(p.historico)}</small>
+                    </span>
+                </td>
+                <td class="macro-main">
+                    <strong>${p[valueKey] || 0}</strong>
+                    <span>${unitLabel}</span>
+                    <div class="macro-meter"><i style="width:${barWidth}%"></i></div>
+                </td>
+                <td data-label="Pts">${p.pontos || 0}</td>
+                <td data-label="J">${p.jogos || 0}</td>
+                <td data-label="G">${p.gols || 0}</td>
+                <td data-label="%">${aproveitamento}%</td>
+                <td data-label="${mode === 'artilharia' ? 'G/J' : 'Ult'}">${mode === 'artilharia' ? mediaGols : getLastNumeric(p.historico)}</td>
+            </tr>
+        `;
+    }).join('');
+
+    const lastHeader = mode === 'artilharia' ? 'G/J' : 'Ult.';
+
+    return `
+        <div class="macro-table-card">
+            <div class="macro-table-head">
+                <span class="widget-title"><i class="fa-solid fa-ranking-star"></i> Ranking completo</span>
+            </div>
+            <div class="macro-table-scroll">
+                <table class="macro-table">
+                    <thead>
+                        <tr>
+                            <th>Pos</th>
+                            <th>Atleta</th>
+                            <th>${unitLabel}</th>
+                            <th>Pts</th>
+                            <th>J</th>
+                            <th>Gols</th>
+                            <th>Aprov.</th>
+                            <th>${lastHeader}</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+function getAproveitamento(player) {
+    if (!player.jogos) return '0.0';
+    return (((player.pontos || 0) / (player.jogos * 3)) * 100).toFixed(1);
+}
+
+function getInitials(name) {
+    return String(name || '')
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map(part => part[0])
+        .join('')
+        .toUpperCase();
+}
+
+function renderRecentForm(history = []) {
+    return history.slice(-5).map(result => {
+        let cls = 'mini-loss';
+        let label = result;
+        if (result === 3) { cls = 'mini-win'; label = 'V'; }
+        else if (result === 1) { cls = 'mini-draw'; label = 'E'; }
+        else if (result === 'F') { cls = 'mini-absent'; label = 'F'; }
+        return `<i class="${cls}">${label}</i>`;
+    }).join('');
+}
+
+function getLastNumeric(history = []) {
+    for (let i = history.length - 1; i >= 0; i--) {
+        if (typeof history[i] === 'number') return history[i];
+    }
+    return '-';
 }
 
 function initInteractiveEffects() {
@@ -454,6 +564,7 @@ function openSheet(name) {
     const allPlayers = [...classificacaoSegura, ...goleirosSeguros];
     const player = allPlayers.find(p => p.nome === name);
     if (!player) return;
+    const isGoalkeeper = goleirosSeguros.some(p => p.nome === name);
 
     const sortedList = allPlayers.sort((a, b) => {
         if (b.pontos !== a.pontos) return b.pontos - a.pontos;
@@ -469,21 +580,49 @@ function openSheet(name) {
     else if (rank === 3) rankElement.classList.add('rank-bronze');
 
     document.getElementById('sName').innerText = player.nome;
+    document.getElementById('sInitials').innerText = getInitials(player.nome);
+    document.getElementById('sRole').innerHTML = isGoalkeeper
+        ? '<i class="fa-solid fa-shield-halved"></i> GOLEIRO'
+        : '<i class="fa-solid fa-person-running"></i> ATLETA';
     animateValue('sPoints', 0, player.pontos, 800);
     animateValue('sGames', 0, player.jogos, 600);
     animateValue('sGoals', 0, player.gols || 0, 700);
 
+    const aproveitamento = player.jogos > 0 ? ((player.pontos / (player.jogos * 3)) * 100) : 0;
+    const golsJogo = player.jogos > 0 ? ((player.gols || 0) / player.jogos) : 0;
+    document.getElementById('sAprov').innerText = `${aproveitamento.toFixed(1)}%`;
+    document.getElementById('sAprovBar').style.width = `${Math.min(aproveitamento, 100)}%`;
+    document.getElementById('sGolsJogo').innerText = golsJogo.toFixed(2);
+
     const hContainer = document.getElementById('sHistory');
     hContainer.innerHTML = '';
+    const recent = (player.historico || []).slice(-8);
+    const recentNumbers = recent.filter(res => typeof res === 'number');
+    const wins = recentNumbers.filter(res => res === 3).length;
+    const draws = recentNumbers.filter(res => res === 1).length;
+    const losses = recentNumbers.filter(res => res === 0).length;
+    const absences = recent.filter(res => res === 'F').length;
+
     if (player.historico) {
-        player.historico.forEach((res, idx) => {
+        recent.forEach((res, idx) => {
             let cls = 'h-loss';
+            let label = res;
             if (res === 3) cls = 'h-win';
             else if (res === 1) cls = 'h-draw';
             else if (res === 'F') cls = 'h-absent';
-            hContainer.innerHTML += `<div class="h-dot ${cls}" style="animation: slideUp 0.3s backwards ${idx * 0.1}s"></div>`;
+            if (res === 3) label = 'V';
+            else if (res === 1) label = 'E';
+            else if (res === 0) label = 'D';
+            hContainer.innerHTML += `<div class="h-dot ${cls}" style="animation: slideUp 0.3s backwards ${idx * 0.06}s">${label}</div>`;
         });
     }
+    document.getElementById('sTrend').innerText = wins >= 3 ? 'Momento forte' : absences >= 3 ? 'Baixa presenca' : 'Ritmo estavel';
+    document.getElementById('sHistorySummary').innerHTML = `
+        <span><strong>${wins}</strong> V</span>
+        <span><strong>${draws}</strong> E</span>
+        <span><strong>${losses}</strong> D</span>
+        <span><strong>${absences}</strong> F</span>
+    `;
 
     const sheetCard = document.getElementById('player-sheet').querySelector('.sheet-card');
     sheetCard.classList.add('light-mode');

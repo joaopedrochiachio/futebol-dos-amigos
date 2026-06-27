@@ -10,7 +10,7 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&family=Space+Grotesk:wght@500;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 
 <body>
@@ -49,9 +49,12 @@
             <button class="close-sheet" onclick="closeSheet()"><i class="fa-solid fa-xmark"></i></button>
 
             <div class="sheet-header">
-                <div class="player-rank-badge" id="sRank">#1</div>
+                <div class="sheet-player-avatar" id="sInitials">JA</div>
                 <h2 id="sName">NOME</h2>
-                <div class="team-shield"><i class="fa-solid fa-shield-halved"></i></div>
+                <div class="sheet-player-meta">
+                    <span class="player-rank-badge" id="sRank">#1</span>
+                    <span class="player-role-badge" id="sRole">ATLETA</span>
+                </div>
             </div>
 
             <div class="sheet-stats">
@@ -69,17 +72,31 @@
                 </div>
             </div>
 
+            <div class="sheet-performance">
+                <div class="perf-card">
+                    <span class="perf-label">Aproveitamento</span>
+                    <strong id="sAprov">0%</strong>
+                    <div class="perf-bar"><i id="sAprovBar"></i></div>
+                </div>
+                <div class="perf-card">
+                    <span class="perf-label">Gols/Jogo</span>
+                    <strong id="sGolsJogo">0.00</strong>
+                    <div class="perf-sub" id="sTrend">Forma recente</div>
+                </div>
+            </div>
+
             <div class="sheet-history">
                 <h3>FORMA RECENTE</h3>
                 <div class="history-track" id="sHistory"></div>
+                <div class="history-summary" id="sHistorySummary"></div>
             </div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="excel-loader.js?v=2"></script>
-    <script src="dados.js?v=2"></script>
-    <script src="script.js?v=2"></script>
+    <script src="excel-loader.js?v=5"></script>
+    <script src="dados.js?v=5"></script>
+    <script src="script.js?v=5"></script>
 </body>
 
 </html>
