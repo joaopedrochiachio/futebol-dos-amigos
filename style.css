@@ -1581,6 +1581,100 @@ h1 {
     color: rgba(255, 255, 255, 0.52);
 }
 
+.draft-section {
+    margin-top: 28px;
+    margin-bottom: 24px;
+}
+
+.draft-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 16px;
+    min-height: 118px;
+    padding: 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(0, 242, 255, 0.18);
+    background:
+        linear-gradient(135deg, rgba(0, 242, 255, 0.12), transparent 40%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.025)),
+        rgba(0, 0, 0, 0.34);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.34);
+    color: #fff;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.draft-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(90deg, transparent 49.6%, rgba(255, 255, 255, 0.12) 50%, transparent 50.4%),
+        radial-gradient(circle at 18% 50%, rgba(0, 230, 118, 0.18), transparent 150px);
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.draft-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.draft-icon {
+    width: 58px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--accent), #00e676);
+    color: #03110d;
+    font-size: 1.45rem;
+    box-shadow: 0 0 26px rgba(0, 242, 255, 0.24);
+}
+
+.draft-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.draft-copy span {
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.draft-copy strong {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1.3rem, 3vw, 2rem);
+    line-height: 1;
+}
+
+.draft-copy small {
+    max-width: 520px;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.86rem;
+    line-height: 1.35;
+}
+
+.draft-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.09);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 900;
+}
+
 @media (min-width: 860px) {
     .dash-container {
         display: grid;
@@ -1961,6 +2055,25 @@ h1 {
 
     .board-summary small {
         font-size: 0.53rem;
+    }
+
+    .draft-card {
+        grid-template-columns: auto minmax(0, 1fr);
+        min-height: 0;
+        padding: 15px;
+    }
+
+    .draft-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        font-size: 1.2rem;
+    }
+
+    .draft-action {
+        grid-column: 1 / -1;
+        justify-content: center;
+        width: 100%;
     }
 
     .board-podium-panel {

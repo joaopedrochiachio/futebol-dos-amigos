@@ -1,4 +1,4 @@
-let currentMode = 'visao-geral';
+﻿let currentMode = 'visao-geral';
 const canvas = document.getElementById('particle-canvas');
 const ctx = canvas.getContext('2d');
 
@@ -7,9 +7,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     initParticles();
     animateParticles();
-
-    // Injeta os estilos da Arena VS dinamicamente
-    injectVSStyles();
 
     switchTab('visao-geral');
 
@@ -43,85 +40,7 @@ async function carregarDadosTemporada() {
         console.warn('Usando dados.js como fallback:', error);
     }
 }
-
-function injectVSStyles() {
-    if (document.getElementById('vs-arena-styles')) return;
-    const style = document.createElement('style');
-    style.id = 'vs-arena-styles';
-    style.innerHTML = `
-        .vs-arena {
-            background: linear-gradient(180deg, #111 0%, #050505 100%);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 25px 15px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-            position: relative;
-            overflow: hidden;
-        }
-        .vs-arena::before {
-            content: ''; position: absolute; top: -50px; left: 50%; transform: translateX(-50%);
-            width: 200px; height: 100px; background: radial-gradient(circle, rgba(255,77,0,0.15) 0%, transparent 70%); pointer-events: none;
-        }
-        .vs-header {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; position: relative;
-        }
-        .vs-player-box {
-            width: 40%; text-align: center; position: relative;
-        }
-        .vs-select {
-            width: 100%; appearance: none; background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.1);
-            color: white; padding: 12px 10px; border-radius: 12px; font-weight: 900; font-family: 'Space Grotesk';
-            font-size: 0.95rem; text-align: center; cursor: pointer; outline: none; transition: 0.3s;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        /* Correção para o seletor não ficar todo branco */
-        .vs-select option {
-            background-color: #111; 
-            color: white;
-            font-weight: bold;
-        }
-        
-        .p1-box .vs-select { border-color: rgba(0, 242, 255, 0.4); text-shadow: 0 0 10px rgba(0, 242, 255, 0.5); }
-        .p2-box .vs-select { border-color: rgba(255, 204, 0, 0.4); text-shadow: 0 0 10px rgba(255, 204, 0, 0.5); }
-        .p1-box .vs-select:focus { border-color: var(--accent); box-shadow: 0 0 20px rgba(0, 242, 255, 0.3); }
-        .p2-box .vs-select:focus { border-color: var(--gold); box-shadow: 0 0 20px rgba(255, 204, 0, 0.3); }
-        
-        .vs-badge {
-            font-family: 'Space Grotesk'; font-weight: 900; color: var(--fire); font-size: 1.8rem;
-            text-shadow: 0 0 20px rgba(255, 77, 0, 0.8), 0 0 40px rgba(255, 77, 0, 0.4);
-            animation: pulseVS 2s infinite; z-index: 2;
-        }
-        
-        .stat-row {
-            display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
-        }
-        .stat-label-center {
-            width: 70px; text-align: center; font-size: 0.65rem; color: #888; font-weight: 800;
-            text-transform: uppercase; letter-spacing: 1px; line-height: 1.2;
-        }
-        .bar-container {
-            flex: 1; height: 22px; background: rgba(255,255,255,0.03); display: flex; align-items: center;
-            border-radius: 6px; position: relative;
-        }
-        .bar-left { justify-content: flex-end; border-right: 1px solid rgba(255,255,255,0.1); }
-        .bar-right { justify-content: flex-start; border-left: 1px solid rgba(255,255,255,0.1); }
-        
-        .bar-fill {
-            height: 100%; display: flex; align-items: center; font-family: 'Space Grotesk'; font-weight: 900; font-size: 0.85rem;
-            color: #000; transition: width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-        .fill-p1 { background: linear-gradient(90deg, #0088ff, var(--accent)); justify-content: flex-start; padding-left: 8px; border-radius: 6px 0 0 6px; box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); overflow:hidden;}
-        .fill-p2 { background: linear-gradient(90deg, var(--gold), #ff8800); justify-content: flex-end; padding-right: 8px; border-radius: 0 6px 6px 0; box-shadow: 0 0 15px rgba(255, 204, 0, 0.4); overflow:hidden;}
-        
-        @keyframes pulseVS {
-            0% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.15); opacity: 1; text-shadow: 0 0 30px rgba(255, 77, 0, 1); }
-            100% { transform: scale(1); opacity: 0.8; }
-        }
-    `;
-    document.head.appendChild(style);
-}
-
+
 function switchTab(mode) {
     currentMode = mode;
     const buttons = document.querySelectorAll('.seg-btn');
@@ -138,64 +57,7 @@ function switchTab(mode) {
     });
     renderContent();
 }
-
-// --- LÓGICA DA BATALHA INTERATIVA ---
-window.updateBatalha = function () {
-    if (!window.APP_PLAYERS) return;
-    const p1Name = document.getElementById('vs-p1').value;
-    const p2Name = document.getElementById('vs-p2').value;
-
-    // Busca os jogadores apenas se a seleção não for vazia
-    const p1 = p1Name ? window.APP_PLAYERS.find(p => p.nome === p1Name) : null;
-    const p2 = p2Name ? window.APP_PLAYERS.find(p => p.nome === p2Name) : null;
-
-    // Se nenhum jogador for selecionado de um lado, os status desse lado ficam 0
-    const stats1 = p1 ? {
-        pts: p1.pontos,
-        gols: p1.gols || 0,
-        jogos: p1.jogos,
-        aprov: p1.jogos > 0 ? ((p1.pontos / (p1.jogos * 3)) * 100) : 0
-    } : { pts: 0, gols: 0, jogos: 0, aprov: 0 };
-
-    const stats2 = p2 ? {
-        pts: p2.pontos,
-        gols: p2.gols || 0,
-        jogos: p2.jogos,
-        aprov: p2.jogos > 0 ? ((p2.pontos / (p2.jogos * 3)) * 100) : 0
-    } : { pts: 0, gols: 0, jogos: 0, aprov: 0 };
-
-    const maxPts = Math.max(stats1.pts, stats2.pts, 1);
-    const maxGols = Math.max(stats1.gols, stats2.gols, 1);
-    const maxJogos = Math.max(stats1.jogos, stats2.jogos, 1);
-    const maxAprov = 100; // Aproveitamento máximo é sempre 100%
-
-    // Atualiza as barras
-    updateBar('pts', stats1.pts, stats2.pts, maxPts, false);
-    updateBar('gols', stats1.gols, stats2.gols, maxGols, false);
-    updateBar('jogos', stats1.jogos, stats2.jogos, maxJogos, false);
-    updateBar('aprov', stats1.aprov, stats2.aprov, maxAprov, true);
-};
-
-function updateBar(statId, val1, val2, maxVal, isPercent) {
-    const bar1 = document.getElementById(`bar-p1-${statId}`);
-    const bar2 = document.getElementById(`bar-p2-${statId}`);
-
-    // Se não há valor, a barra fica invisível em 0%. 
-    // Se há, garante um mínimo de 5% de largura para o número caber no visual
-    const pct1 = val1 === 0 ? 0 : Math.max((val1 / maxVal) * 100, 5);
-    const pct2 = val2 === 0 ? 0 : Math.max((val2 / maxVal) * 100, 5);
-
-    bar1.style.width = pct1 + '%';
-    bar2.style.width = pct2 + '%';
-
-    // Se o valor for 0, oculta o número na tela inicial para ficar "limpo"
-    const display1 = val1 === 0 ? "" : (isPercent ? val1.toFixed(1) + '%' : val1);
-    const display2 = val2 === 0 ? "" : (isPercent ? val2.toFixed(1) + '%' : val2);
-
-    bar1.innerText = display1;
-    bar2.innerText = display2;
-}
-
+
 function renderContent() {
     const area = document.getElementById('content-area');
     area.innerHTML = '';
@@ -247,13 +109,6 @@ function renderContent() {
                     </div>
                 </div>
             `;
-        });
-
-        // Configuração Menu Arena VS: Começa com opção "Selecione..." vazia
-        let optionsHTML = '<option value="" disabled selected>Selecione...</option>';
-        const playersForSelect = [...todosJogadores].sort((a, b) => b.nome.localeCompare(a.nome));
-        playersForSelect.forEach(p => {
-            optionsHTML += `<option value="${p.nome}">${p.nome}</option>`;
         });
 
         const html = `
@@ -310,78 +165,28 @@ function renderContent() {
                         ${top5HTML}
                     </div>
                 </div>
-
-                <div style="margin-top: 35px; margin-bottom: 30px;">
-                    <div class="widget-title"><i class="fa-solid fa-gamepad"></i> Arena Head-to-Head</div>
-                    
-                    <div class="vs-arena">
-                        <div class="vs-header">
-                            <div class="vs-player-box p1-box">
-                                <select id="vs-p1" class="vs-select" onchange="window.updateBatalha()">
-                                    ${optionsHTML}
-                                </select>
-                            </div>
-                            <div class="vs-badge">VS</div>
-                            <div class="vs-player-box p2-box">
-                                <select id="vs-p2" class="vs-select" onchange="window.updateBatalha()">
-                                    ${optionsHTML}
-                                </select>
-                            </div>
+                <div class="draft-section">
+                    <div class="widget-title"><i class="fa-solid fa-clipboard-list"></i> Sorteio dos Times</div>
+                    <a class="draft-card hover-tilt click-shrink" href="https://app.pelada-draft.com.br/peladas" target="_blank" rel="noopener noreferrer">
+                        <div class="draft-icon">
+                            <i class="fa-solid fa-people-arrows"></i>
                         </div>
-
-                        <div class="stat-row">
-                            <div class="bar-container bar-left">
-                                <div id="bar-p1-pts" class="bar-fill fill-p1" style="width: 0%;"></div>
-                            </div>
-                            <div class="stat-label-center">Pontos<br>Totais</div>
-                            <div class="bar-container bar-right">
-                                <div id="bar-p2-pts" class="bar-fill fill-p2" style="width: 0%;"></div>
-                            </div>
+                        <div class="draft-copy">
+                            <span>Pelada Draft</span>
+                            <strong>Montar times da rodada</strong>
+                            <small>Use como apoio para organizar a pelada e separar os times.</small>
                         </div>
-
-                        <div class="stat-row">
-                            <div class="bar-container bar-left">
-                                <div id="bar-p1-gols" class="bar-fill fill-p1" style="width: 0%;"></div>
-                            </div>
-                            <div class="stat-label-center">Bolas na<br>Rede</div>
-                            <div class="bar-container bar-right">
-                                <div id="bar-p2-gols" class="bar-fill fill-p2" style="width: 0%;"></div>
-                            </div>
+                        <div class="draft-action">
+                            <span>Abrir</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
                         </div>
-
-                        <div class="stat-row">
-                            <div class="bar-container bar-left">
-                                <div id="bar-p1-aprov" class="bar-fill fill-p1" style="width: 0%;"></div>
-                            </div>
-                            <div class="stat-label-center">Aprov.<br>Pts (%)</div>
-                            <div class="bar-container bar-right">
-                                <div id="bar-p2-aprov" class="bar-fill fill-p2" style="width: 0%;"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-row" style="margin-bottom: 0;">
-                            <div class="bar-container bar-left">
-                                <div id="bar-p1-jogos" class="bar-fill fill-p1" style="width: 0%;"></div>
-                            </div>
-                            <div class="stat-label-center">Presença<br>(Jogos)</div>
-                            <div class="bar-container bar-right">
-                                <div id="bar-p2-jogos" class="bar-fill fill-p2" style="width: 0%;"></div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
+                    </a>
+                </div></div>
         `;
         area.innerHTML = html;
         initInteractiveEffects();
         startCountdown();
 
-        // Roda a batalha uma vez para garantir que as barras iniciem vazias e bonitas
-        setTimeout(() => {
-            window.updateBatalha();
-        }, 150);
         return;
     }
 
@@ -684,3 +489,5 @@ function animateParticles() {
     });
     requestAnimationFrame(animateParticles);
 }
+
+
