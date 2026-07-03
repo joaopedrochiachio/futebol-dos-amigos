@@ -2,8 +2,8 @@ var DADOS = {
     "classificacao":  [
                           {
                               "nome":  "João",
-                              "pontos":  50,
-                              "jogos":  22,
+                              "pontos":  53,
+                              "jogos":  23,
                               "historico":  [
                                                 3,
                                                 3,
@@ -29,49 +29,16 @@ var DADOS = {
                                                 3,
                                                 3,
                                                 0,
+                                                3,
                                                 3,
                                                 3
                                             ],
-                              "gols":  43
-                          },
-                          {
-                              "nome":  "Tampico",
-                              "pontos":  34,
-                              "jogos":  21,
-                              "historico":  [
-                                                "F",
-                                                3,
-                                                1,
-                                                0,
-                                                0,
-                                                3,
-                                                0,
-                                                0,
-                                                0,
-                                                0,
-                                                0,
-                                                3,
-                                                3,
-                                                3,
-                                                "F",
-                                                3,
-                                                "F",
-                                                3,
-                                                3,
-                                                3,
-                                                0,
-                                                "F",
-                                                "F",
-                                                3,
-                                                3,
-                                                0
-                                            ],
-                              "gols":  33
+                              "gols":  44
                           },
                           {
                               "nome":  "Jorge",
-                              "pontos":  34,
-                              "jogos":  22,
+                              "pontos":  37,
+                              "jogos":  23,
                               "historico":  [
                                                 "F",
                                                 3,
@@ -98,14 +65,50 @@ var DADOS = {
                                                 3,
                                                 3,
                                                 0,
+                                                3,
                                                 3
                                             ],
                               "gols":  39
                           },
                           {
+                              "nome":  "Tampico",
+                              "pontos":  34,
+                              "jogos":  22,
+                              "historico":  [
+                                                "F",
+                                                3,
+                                                1,
+                                                0,
+                                                0,
+                                                3,
+                                                0,
+                                                0,
+                                                0,
+                                                0,
+                                                0,
+                                                3,
+                                                3,
+                                                3,
+                                                "F",
+                                                3,
+                                                "F",
+                                                3,
+                                                3,
+                                                3,
+                                                0,
+                                                "F",
+                                                "F",
+                                                3,
+                                                3,
+                                                0,
+                                                0
+                                            ],
+                              "gols":  34
+                          },
+                          {
                               "nome":  "Bruno",
                               "pontos":  32,
-                              "jogos":  25,
+                              "jogos":  26,
                               "historico":  [
                                                 3,
                                                 0,
@@ -132,7 +135,8 @@ var DADOS = {
                                                 3,
                                                 3,
                                                 3,
-                                                3
+                                                3,
+                                                0
                                             ],
                               "gols":  23
                           },
@@ -166,14 +170,15 @@ var DADOS = {
                                                 "F",
                                                 3,
                                                 0,
-                                                0
+                                                0,
+                                                "F"
                                             ],
                               "gols":  5
                           },
                           {
                               "nome":  "Luciano",
                               "pontos":  28,
-                              "jogos":  24,
+                              "jogos":  25,
                               "historico":  [
                                                 3,
                                                 0,
@@ -200,9 +205,45 @@ var DADOS = {
                                                 3,
                                                 3,
                                                 3,
+                                                0,
                                                 0
                                             ],
                               "gols":  23
+                          },
+                          {
+                              "nome":  "Pedro",
+                              "pontos":  28,
+                              "jogos":  15,
+                              "historico":  [
+                                                "F",
+                                                3,
+                                                "F",
+                                                "F",
+                                                "F",
+                                                "F",
+                                                "F",
+                                                1,
+                                                3,
+                                                3,
+                                                3,
+                                                0,
+                                                "F",
+                                                0,
+                                                0,
+                                                3,
+                                                "F",
+                                                0,
+                                                "F",
+                                                "F",
+                                                3,
+                                                "F",
+                                                3,
+                                                0,
+                                                3,
+                                                "F",
+                                                3
+                                            ],
+                              "gols":  19
                           },
                           {
                               "nome":  "Andrey",
@@ -234,14 +275,15 @@ var DADOS = {
                                                 "F",
                                                 "F",
                                                 0,
-                                                3
+                                                3,
+                                                "F"
                                             ],
                               "gols":  16
                           },
                           {
                               "nome":  "Lucas Carneiro",
                               "pontos":  25,
-                              "jogos":  23,
+                              "jogos":  24,
                               "historico":  [
                                                 3,
                                                 0,
@@ -268,14 +310,15 @@ var DADOS = {
                                                 0,
                                                 0,
                                                 0,
+                                                0,
                                                 0
                                             ],
-                              "gols":  30
+                              "gols":  31
                           },
                           {
                               "nome":  "Carlos",
                               "pontos":  25,
-                              "jogos":  20,
+                              "jogos":  21,
                               "historico":  [
                                                 0,
                                                 "F",
@@ -302,14 +345,15 @@ var DADOS = {
                                                 3,
                                                 0,
                                                 0,
-                                                "F"
+                                                "F",
+                                                0
                                             ],
-                              "gols":  27
+                              "gols":  28
                           },
                           {
                               "nome":  "Luan",
                               "pontos":  25,
-                              "jogos":  22,
+                              "jogos":  23,
                               "historico":  [
                                                 0,
                                                 0,
@@ -336,43 +380,10 @@ var DADOS = {
                                                 "F",
                                                 0,
                                                 3,
+                                                0,
                                                 0
                                             ],
                               "gols":  27
-                          },
-                          {
-                              "nome":  "Pedro",
-                              "pontos":  25,
-                              "jogos":  14,
-                              "historico":  [
-                                                "F",
-                                                3,
-                                                "F",
-                                                "F",
-                                                "F",
-                                                "F",
-                                                "F",
-                                                1,
-                                                3,
-                                                3,
-                                                3,
-                                                0,
-                                                "F",
-                                                0,
-                                                0,
-                                                3,
-                                                "F",
-                                                0,
-                                                "F",
-                                                "F",
-                                                3,
-                                                "F",
-                                                3,
-                                                0,
-                                                3,
-                                                "F"
-                                            ],
-                              "gols":  17
                           },
                           {
                               "nome":  "Ivair",
@@ -404,14 +415,15 @@ var DADOS = {
                                                 "F",
                                                 0,
                                                 "F",
+                                                "F",
                                                 "F"
                                             ],
                               "gols":  7
                           },
                           {
                               "nome":  "Wendril",
-                              "pontos":  6,
-                              "jogos":  2,
+                              "pontos":  9,
+                              "jogos":  3,
                               "historico":  [
                                                 "F",
                                                 "F",
@@ -438,9 +450,10 @@ var DADOS = {
                                                 "F",
                                                 "F",
                                                 3,
+                                                3,
                                                 3
                                             ],
-                              "gols":  2
+                              "gols":  3
                           },
                           {
                               "nome":  "Maicon",
@@ -472,50 +485,17 @@ var DADOS = {
                                                 "F",
                                                 "F",
                                                 "F",
-                                                0
-                                            ],
-                              "gols":  0
-                          },
-                          {
-                              "nome":  "Edgar",
-                              "pontos":  0,
-                              "jogos":  12,
-                              "historico":  [
-                                                "F",
-                                                "F",
                                                 0,
-                                                0,
-                                                0,
-                                                "F",
-                                                "F",
-                                                0,
-                                                0,
-                                                "F",
-                                                "F",
-                                                0,
-                                                "F",
-                                                "F",
-                                                0,
-                                                "F",
-                                                0,
-                                                "F",
-                                                0,
-                                                "F",
-                                                "F",
-                                                0,
-                                                0,
-                                                0,
-                                                "F",
                                                 "F"
                                             ],
-                              "gols":  22
+                              "gols":  0
                           }
                       ],
     "goleiros":  [
                      {
                          "nome":  "Ivan",
-                         "pontos":  31,
-                         "jogos":  21,
+                         "pontos":  34,
+                         "jogos":  22,
                          "historico":  [
                                            3,
                                            3,
@@ -542,19 +522,20 @@ var DADOS = {
                                            0,
                                            0,
                                            "F",
-                                           0
+                                           0,
+                                           3
                                        ],
                          "gols":  0
                      },
                      {
                          "nome":  "Flávio",
                          "pontos":  30,
-                         "jogos":  18,
+                         "jogos":  20,
                          "historico":  [
                                            "F",
                                            0,
                                            "F",
-                                           "F",
+                                           0,
                                            3,
                                            0,
                                            "F",
@@ -576,6 +557,7 @@ var DADOS = {
                                            3,
                                            3,
                                            3,
+                                           0,
                                            0
                                        ],
                          "gols":  0
@@ -583,12 +565,12 @@ var DADOS = {
                  ],
     "meta":  {
                  "aba":  "2026",
-                 "rodadaAtual":  26,
+                 "rodadaAtual":  27,
                  "destaque":  {
-                                  "nome":  "Bruno",
+                                  "nome":  "Pedro",
                                   "gols":  2,
-                                  "jogos":  25,
-                                  "rodada":  26
+                                  "jogos":  14,
+                                  "rodada":  27
                               }
              }
 };
