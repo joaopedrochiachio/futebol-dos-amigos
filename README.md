@@ -8,7 +8,7 @@ Site com a classificação e as estatísticas da pelada dos amigos na temporada 
 
 ## Funcionalidades
 
-- Tabela de classificação com aproveitamento de cada jogador
+- Tabelas de classificação, artilharia e goleiros, com aproveitamento de cada jogador
 - Ficha do jogador com desempenho, estatísticas e histórico por rodada
 - Forma recente dos últimos jogos
 - Contagem regressiva para a próxima rodada
@@ -25,7 +25,7 @@ A pontuação é mantida na planilha **`Pontuação 2026.xlsx`**. O site lê a p
 
 ## Rodar localmente
 
-A leitura da planilha precisa de um servidor (o navegador bloqueia `fetch` em `file://`):
+Abrindo o `index.html` direto, o site usa o `dados.js`. Para ler a planilha, sirva a pasta:
 
 ```bash
 python3 -m http.server 8080
